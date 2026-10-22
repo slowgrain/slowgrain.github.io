@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Buy Pro — Slowgrain Cleaner for Google Drive</title>
+<style>
+  :root { color-scheme: light dark; --ink: #16161a; --muted: #5c5c66; --line: #d9d8d3; --accent: #2f5bd3; --bg: #fbfbf9; }
+  @media (prefers-color-scheme: dark) { :root { --ink: #ecebe6; --muted: #a7a6a0; --line: #3a3a40; --accent: #8fb0ff; --bg: #141417; } }
+  body { margin: 0 auto; max-width: 640px; padding: 32px 16px 64px; font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  h1 { font-size: 1.5rem; line-height: 1.3; }
+  button { display: block; width: 100%; margin: 12px 0; padding: 14px 16px; font: inherit; font-weight: 600; text-align: left; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  .muted { color: var(--muted); font-size: .92rem; }
+  #status { margin: 16px 0; }
+  #back { display: inline-block; margin-top: 8px; padding: 12px 16px; border-radius: 10px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 600; }
+  @media (prefers-color-scheme: dark) { #back { color: #141417; } }
+</style>
+</head>
+<body>
+<h1 id="heading"></h1>
+<p id="intro"></p>
+<button id="monthly" type="button" hidden></button>
+<button id="annual" type="button" hidden></button>
+<p id="launch" class="muted"></p>
+<p id="status" role="status"></p>
+<p><a id="back" hidden></a></p>
+<p id="backNote" class="muted" hidden></p>
+<p id="refunds" class="muted"></p>
+<p class="muted"><a id="terms" href="../terms/"></a> · <a id="privacy" href="../privacy/"></a></p>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+  (function () {
+    var COPY = {"en":{"title":"Buy Pro — Slowgrain Cleaner for Google Drive","heading":"Slowgrain Cleaner for Google Drive — Pro","intro":"Pro keeps up to 10,000 files in your list and adds scheduled rechecks and optional automatic cleanup of the files you choose. The app works only on files you pick or send from Google Drive.","monthly":"Monthly — US$2.99, first month US$2.54","annual":"Yearly — US$24.99, first year US$17.49","launch":"Launch discount on the first payment until 31 January 2027. Renewals are charged at the regular price. Local currency and tax are shown in checkout.","missing":"Open this page from the Plan screen of the app so the purchase is linked to your Google account.","loadFailed":"The checkout could not load. Please write to slowgrain.dev@gmail.com.","done":"Thank you — your payment is complete. Paddle has emailed you a receipt.","back":"Return to the app to activate Pro","backNote":"If Pro is not active after returning, open Plan and licence and choose “Verify previous purchase”.","refunds":"Payment is handled by Paddle, the merchant of record: the receipt, sales tax or VAT, subscription management and any refund come from Paddle.","terms":"Terms","privacy":"Privacy"},"ko":{"title":"Pro 구매 — Slowgrain Cleaner for Google Drive","heading":"Slowgrain Cleaner for Google Drive — Pro","intro":"Pro는 목록에 파일을 10,000개까지 담고, 직접 고른 파일의 예약 재검사와 선택형 자동 정리를 제공합니다. 앱은 직접 고르거나 Google Drive에서 보낸 파일만 다룹니다.","monthly":"월간 — US$2.99, 첫 달 US$2.54","annual":"연간 — US$24.99, 첫해 US$17.49","launch":"출시 할인은 2027년 1월 31일까지 첫 결제에만 적용되며, 갱신은 정가로 청구됩니다. 현지 통화와 세금은 결제 화면에서 표시됩니다.","missing":"구매가 Google 계정에 연결되도록 앱의 플랜 화면에서 이 페이지를 열어 주세요.","loadFailed":"결제 화면을 불러오지 못했습니다. slowgrain.dev@gmail.com로 문의해 주세요.","done":"결제가 완료되었습니다. Paddle이 영수증을 이메일로 보냈습니다.","back":"앱으로 돌아가 Pro 활성화","backNote":"돌아간 뒤에도 Pro가 켜지지 않으면 플랜 및 라이선스에서 ‘이전 결제 확인’을 누르세요.","refunds":"결제는 판매 대행사(Merchant of Record)인 Paddle이 처리합니다. 영수증, 부가세, 구독 관리와 환불은 Paddle이 담당합니다.","terms":"이용약관","privacy":"개인정보처리방침"}};
+    var CONFIG = {"environment":"live","clientToken":"live_ff53724edf185259b7ddab5bdf8","prices":{"monthly":"pri_01m5h1fpkmcgwygc5n7emezqy9","annual":"pri_01m5h1gwmghhxrky1cj28p62t1"},"discounts":{"monthly":"dsc_01m5h1m8p7x1hwn5e5a2ctdccv","annual":"dsc_01m5h1q1c6r3n23ycpgyxjf0ze"},"appUrl":"https://script.google.com/macros/s/AKfycbwYu2NZlgviL-xks3t3N_gSZ34yu7JJy10w_RG7LxOeeihc0i4cuYpgeUPPA9x_4TVM/exec"};
+    var params = new URLSearchParams(location.search);
+    var lang = params.get('lang') === 'ko' ? 'ko' : 'en';
+    var text = COPY[lang];
+    document.documentElement.lang = lang;
+    document.title = text.title;
+    ['heading', 'intro', 'launch', 'refunds', 'terms', 'privacy'].forEach(function (id) { document.getElementById(id).textContent = text[id]; });
+    if (lang === 'ko') { document.getElementById('terms').href = '../ko/terms/'; document.getElementById('privacy').href = '../ko/privacy/'; }
+    var status = document.getElementById('status');
+    var nonce = params.get('n') || '';
+    var plan = params.get('plan');
+
+    if (typeof Paddle === 'undefined') { status.textContent = text.loadFailed; return; }
+    if (CONFIG.environment === 'sandbox') Paddle.Environment.set('sandbox');
+    Paddle.Initialize({
+      token: CONFIG.clientToken,
+      eventCallback: function (event) {
+        if (!event || event.name !== 'checkout.completed' || !event.data || !event.data.transaction_id) return;
+        var txn = String(event.data.transaction_id);
+        if (!/^txn_[a-z0-9]{20,}$/i.test(txn)) return;
+        ['monthly', 'annual'].forEach(function (id) { document.getElementById(id).hidden = true; });
+        status.textContent = text.done;
+        var back = document.getElementById('back');
+        back.href = CONFIG.appUrl + '#paddle_txn=' + encodeURIComponent(txn);
+        back.textContent = text.back;
+        back.hidden = false;
+        var note = document.getElementById('backNote');
+        note.textContent = text.backNote;
+        note.hidden = false;
+      },
+    });
+
+    // Paddle opens a ?_ptxn= transaction by itself; offering a new purchase on top of it invites a double charge.
+    if (params.has('_ptxn')) return;
+    // A purchase must carry the app's account nonce, otherwise the app cannot verify it belongs to this Google account.
+    if (!/^[0-9a-f-]{36}$/i.test(nonce)) { status.textContent = text.missing; return; }
+
+    ['monthly', 'annual'].forEach(function (period) {
+      var button = document.getElementById(period);
+      button.textContent = text[period];
+      button.hidden = false;
+      button.addEventListener('click', function () { open(period); });
+    });
+    if (plan === 'monthly' || plan === 'annual') open(plan);
+
+    function open(period) {
+      Paddle.Checkout.open({
+        items: [{ priceId: CONFIG.prices[period], quantity: 1 }],
+        discountId: CONFIG.discounts[period],
+        customData: { drive_cleaner_account_nonce: nonce },
+        settings: { displayMode: 'overlay', locale: lang, allowDiscountRemoval: false, showAddDiscounts: false },
+      });
+    }
+  })();
+</script>
+</body>
+</html>
