@@ -7,10 +7,10 @@ Published at https://slowgrain.app/ using GitHub Pages from the main branch root
 - `/drive-cleaner/`: English Drive Cleaner product, privacy, terms and support pages.
 - `/drive-cleaner/ko/`: Korean equivalents.
 
-Drive Cleaner content sources are maintained in the sibling `drive-cleaner` repository, `store/*.md`. Rebuild with:
+Drive Cleaner content sources are maintained in the sibling `drive-cleaner` repository, `marketplace/store/*.md`. Rebuild with:
 
 ```sh
-node ../drive-cleaner/scripts/build-public-site.mjs --out ./drive-cleaner
+node ../drive-cleaner/marketplace/scripts/build-public-site.mjs --out ./drive-cleaner
 ```
 
 Commit the generated static pages and push to main to publish. Do not remove CNAME, the Google verification file, or `.nojekyll`. Do not change the Gantt project repository as part of Drive Cleaner changes. Public installation and paid checkout remain unavailable; this website does not deploy the Apps Script app or certify OAuth/CASA compliance.
