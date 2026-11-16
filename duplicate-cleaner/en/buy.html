@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buy a licence — Slowgrain Duplicate Cleaner</title>
+<link rel="stylesheet" href="../site.css">
+<link rel="icon" type="image/png" sizes="64x64" href="https://moraonstudio.com/assets/favicon-64.png">
+<link rel="canonical" href="https://slowgrain.app/duplicate-cleaner/en/buy.html">
+<meta name="robots" content="noai, noimageai">
+</head>
+<body>
+<header><a class="brand" href="./">Slowgrain Duplicate Cleaner</a><a class="company" href="https://moraonstudio.com/#apps">MORAON Studio · SlowGrain</a><nav><a href="install.html">Install</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund.html">Refunds</a><a href="../ko/">한국어</a></nav></header>
+<main>
+
+<h1>Buy a licence</h1>
+<p class="lead">Choose your features and pay; the key appears on this page straight away and is emailed to you too.</p>
+
+<form id="buy">
+<h2>1. Plan</h2>
+<div class="choices"><label class="choice"><input type="radio" name="plan" value="one"><span><strong>Any one feature</strong><small>US$14.99</small></span></label><label class="choice"><input type="radio" name="plan" value="two"><span><strong>Any two features</strong><small>US$21.99</small></span></label><label class="choice"><input type="radio" name="plan" value="all" checked><span><strong>All three features</strong><small>US$27.99</small></span></label></div>
+<h2>2. Features <small id="pick" class="muted"></small></h2>
+<div class="choices"><label class="choice"><input type="checkbox" name="feature" value="local"><span><strong>PC cleanup</strong><small>Duplicates and similar files in folders on your computer</small></span></label><label class="choice"><input type="checkbox" name="feature" value="drive"><span><strong>Google Drive cleanup</strong><small>Duplicates in Google Drive for desktop folders</small></span></label><label class="choice"><input type="checkbox" name="feature" value="foldering"><span><strong>Automatic foldering</strong><small>Move files into folders by date, place or device</small></span></label></div>
+<p class="muted">Two computers · one year of updates · 14-day money-back guarantee · one-time payment</p>
+<p><button class="button" id="pay" type="submit">Pay</button></p>
+<p class="muted">By paying you agree to the <a href="terms.html">terms</a> and the <a href="refund.html">refund policy</a>. Paddle, our reseller, handles payment and receipts.<br>Checkout may show the price in your local currency.</p>
+</form>
+<section id="result" hidden>
+<p id="status" class="lead"></p>
+<div id="keybox" hidden><h2>Your licence key</h2><textarea id="key" readonly rows="4"></textarea><p><button class="button" id="copy" type="button">Copy</button></p><p>In the app, choose Enter key at the bottom left, paste the whole key and choose Activate. The same key is emailed to the address you paid with.</p></div>
+<p id="order" class="muted"></p>
+</section>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+(() => {
+  const C = {"lang":"en","environment":"production","token":"live_5f8440964bcbdc7442fc2eec424","prices":{"one":"pri_01m7h480rsf4bgmsfm7kjsg51r","two":"pri_01m7h4afc9p65fn0pzktfascpc","all":"pri_01m7h4bfbn6hfe7pqdcwh1keq5"},"api":"https://moraonstudio.com/api/slowgrain/","text":{"title":"Buy a licence","lead":"Choose your features and pay; the key appears on this page straight away and is emailed to you too.","plan":"1. Plan","features":"2. Features","pay":"Pay","paying":"Opening checkout…","featureNames":{"local":["PC cleanup","Duplicates and similar files in folders on your computer"],"drive":["Google Drive cleanup","Duplicates in Google Drive for desktop folders"],"foldering":["Automatic foldering","Move files into folders by date, place or device"]},"pickOne":"Choose one","pickTwo":"Choose two","allIncluded":"All three are included","includes":"Two computers · one year of updates · 14-day money-back guarantee · one-time payment","agree":"By paying you agree to the \u003ca href=\"terms.html\">terms\u003c/a> and the \u003ca href=\"refund.html\">refund policy\u003c/a>. Paddle, our reseller, handles payment and receipts.","currency":"Checkout may show the price in your local currency.","waiting":"Payment complete. Making your key…","ready":"Your licence key","copy":"Copy","copied":"Copied","how":"In the app, choose Enter key at the bottom left, paste the whole key and choose Activate. The same key is emailed to the address you paid with.","held":"Payment complete. We will check your feature choice and email your key.","late":"Payment complete. Your key is taking longer than usual and will be emailed to you. If it has not arrived within an hour, write to slowgrain.dev@gmail.com with your order number.","order":"Order","resumed":"Reopening the payment you started.","test":"Test checkout (sandbox): no real money is taken."}};
+  const T = C.text;
+  const $ = (id) => document.getElementById(id);
+  const form = $('buy');
+  const boxes = [...form.querySelectorAll('input[name=feature]')];
+  const need = { one: 1, two: 2, all: 3 };
+  const plan = () => form.querySelector('input[name=plan]:checked').value;
+  const chosen = () => boxes.filter((box) => box.checked).map((box) => box.value);
+  let order = [];
+  function sync() {
+    const count = need[plan()];
+    if (count === 3) boxes.forEach((box) => { box.checked = true; box.disabled = true; });
+    else {
+      boxes.forEach((box) => { box.disabled = false; });
+      order = order.filter((value) => chosen().includes(value));
+      while (chosen().length > count) { const drop = order.shift() || chosen()[0]; boxes.find((box) => box.value === drop).checked = false; }
+    }
+    $('pick').textContent = count === 3 ? T.allIncluded : count === 2 ? T.pickTwo : T.pickOne;
+    $('pay').disabled = chosen().length !== count;
+  }
+  const wanted = new URLSearchParams(location.search).get('plan');
+  if (need[wanted]) form.querySelector('input[name=plan][value=' + wanted + ']').checked = true;
+  form.addEventListener('change', (event) => {
+    if (event.target.name === 'plan' && need[plan()] !== 3) boxes.forEach((box) => { box.checked = false; });
+    if (event.target.name === 'feature' && event.target.checked) order.push(event.target.value);
+    sync();
+  });
+  sync();
+
+  function show(message) { $('result').hidden = false; $('status').textContent = message; }
+  async function waitForKey(txn) {
+    form.hidden = true;
+    show(T.waiting);
+    $('order').textContent = T.order + ': ' + txn;
+    for (let attempt = 0; attempt < 45; attempt += 1) {
+      try {
+        const response = await fetch(C.api + 'licence?txn=' + encodeURIComponent(txn), { cache: 'no-store' });
+        const reply = await response.json();
+        if (reply.status === 'ready') { show(''); $('keybox').hidden = false; $('key').value = reply.key; return; }
+        if (reply.status === 'held') { show(T.held); return; }
+      }
+      catch (error) { /* try again */ }
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+    show(T.late);
+  }
+  $('copy').addEventListener('click', async () => {
+    $('key').select();
+    try { await navigator.clipboard.writeText($('key').value); } catch (error) { document.execCommand('copy'); }
+    $('copy').textContent = T.copied;
+  });
+
+  Paddle.Environment.set(C.environment);
+  Paddle.Initialize({
+    token: C.token,
+    checkout: { settings: { displayMode: 'overlay', theme: 'dark', locale: C.lang } },
+    eventCallback: (event) => {
+      if (event.name === 'checkout.completed' && event.data?.transaction_id) { Paddle.Checkout.close(); waitForKey(event.data.transaction_id); }
+    },
+  });
+  // A payment link (?_ptxn=…) is Paddle bringing someone back to a payment they started: Paddle.js opens it, and a
+  // second Pay button over it would take two payments.
+  if (new URLSearchParams(location.search).get('_ptxn')) { form.hidden = true; show(T.resumed); }
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    $('pay').textContent = T.paying;
+    Paddle.Checkout.open({ items: [{ priceId: C.prices[plan()], quantity: 1 }], customData: { features: chosen().join(','), lang: C.lang } });
+    setTimeout(() => { $('pay').textContent = T.pay; }, 3000);
+  });
+})();
+</script>
+</main>
+<footer>MORAON Studio (모라온 스튜디오) · Owner 문성빈 (Moon Seongbin) · Business reg. 523-43-01343 · Mail-order report 2026-Seoul Gangseo-2743 · slowgrain.dev@gmail.com</footer>
+</body>
+</html>
